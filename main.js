@@ -22,11 +22,21 @@ let c1 = {
     z = this.body.position.z;
     context.save();
     context.beginPath();
-    context.moveTo(x, z);
-    context.lineTo(x + 25, z + 25);
-    context.lineTo(x + 25, z - 25);
-    context.fill();
+    // when I add the transforms, the mouse cursor stops working
+//    context.translate(x+25, z);
 //    context.rotate( this.body.orientation * Math.PI / 180 );
+//    context.translate(-(x+25), -z);
+
+    // draw triangle
+//    context.moveTo( x, z );
+//    context.lineTo( x+25, z+25);
+//    context.lineTo( x+25, z-25);
+//    context.fill();
+    
+    // draw a circle
+    context.arc( x, z, 20, 0, 2 * Math.PI);
+    context.stroke();
+    
     context.restore;
   },
 }
@@ -73,11 +83,11 @@ function frame( nowTime, lastTime )
   // Have character c1 seek the mouse.
   // Experiment with different algorithms: Seek, Arrive, etc.
   var maxSpeed = 100;
-  var k1 = new KinematicSeek( c1.body, mouse, maxSpeed );
-//  var k1 = new KinematicArrive( c1.body, mouse, maxSpeed );
+//  var k1 = new KinematicSeek( c1.body, mouse, maxSpeed );
+  var k1 = new KinematicArrive( c1.body, mouse, maxSpeed );
   var steering = k1.getSteering();
   
-  console.log( c1.body.orientation );
+//  console.log( c1.body.orientation );
 
   // Apply the steering to the character, if it exists
   // n.b. object assignment does NOT create a copy of the object
