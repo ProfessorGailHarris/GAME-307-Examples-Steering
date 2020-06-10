@@ -20,28 +20,29 @@ let c1 = {
   draw: function(context) {
     x = this.body.position.x;
     z = this.body.position.z;
-    context.save();
     context.beginPath();
-    // when I add the transforms, the mouse cursor stops working
-//    context.translate(x+25, z);
-//    context.rotate( this.body.orientation * Math.PI / 180 );
-//    context.translate(-(x+25), -z);
+    
+    // Adjust canvas transform:
+    //   set origin of canvas to center of character shape
+    //   and rotate to desired orientation
+    context.translate(x, z);
+    context.rotate( this.body.orientation );
+    
+    // Set origin back to original position, to prepare for drawing
+    context.translate(-(x), -z);
 
-    // draw triangle
-//    context.moveTo( x, z );
-//    context.lineTo( x+25, z+25);
-//    context.lineTo( x+25, z-25);
-//    context.fill();
-    
-    // draw a circle
-    context.arc( x, z, 20, 0, 2 * Math.PI);
-    context.stroke();
-    
-    context.restore;
+    // Draw triangle for the character
+    context.moveTo( x, z );
+    context.lineTo( x-20, z+15);
+    context.lineTo( x-20, z-15);
+    context.fill();
+        
+    // Restore canvas transform to default (identity)
+    context.setTransform();
   },
 }
 
-// create a steering object s1, to steer the character c1
+// Create a steering object s1, to steer the character c1
 let s1 = new SteeringOutput( 
   new Vector( 0, 0, 0 ),
   0,
@@ -56,7 +57,7 @@ var canvasPosition = canvas.getBoundingClientRect();
 context.lineWidth = 5;
 context.strokeStyle = "rgb(33,66,99)";
 
-// create a mouse character
+// create a mouse character, a small circle
 var mouse = {
   position: new Vector( 0, 0, 0 ),
   draw: function(context) {
@@ -69,13 +70,10 @@ var mouse = {
     context.stroke();
   }
 }
+// monitor position of the mouse
 document.onmousemove = function(e){
     mouse.position.x = e.pageX;
     mouse.position.z = e.pageY;
-}
-setInterval(checkCursor, 1000);
-function checkCursor(){
-//  console.log("x: " + mouse.x + ", y: " + mouse.z + ".");
 }
 
 function frame( nowTime, lastTime )
@@ -87,8 +85,6 @@ function frame( nowTime, lastTime )
   var k1 = new KinematicArrive( c1.body, mouse, maxSpeed );
   var steering = k1.getSteering();
   
-//  console.log( c1.body.orientation );
-
   // Apply the steering to the character, if it exists
   // n.b. object assignment does NOT create a copy of the object
   if (typeof steering !== "undefined" && steering !== null) {

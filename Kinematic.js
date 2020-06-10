@@ -55,7 +55,7 @@ class KinematicSteeringOutput {
 
 function newOrientation( orientation, velocity ) {
   var result;
-  if ( velocity.length() > 0 ) {
+  if ( velocity.length() > 2.5 ) {
     result = velocity.toAngles().theta;
   }
   else {
