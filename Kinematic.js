@@ -33,7 +33,7 @@ class Kinematic {
     this.orientation += this.rotation * time
     
     // Update velocity and rotation
-    if ( typeof steering !== "undefined" && steering !== null ) {
+    if ( typeof steering !== "undefined" && steering !== null && steering.linear !== null ) {
       Vector.add( 
         this.velocity,
         steering.linear.multiply(time), 
