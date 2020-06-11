@@ -85,20 +85,36 @@ function frame( nowTime, lastTime )
   // Experiment with different algorithms: Seek, Arrive, etc.
 
 //  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
-  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
-//  var movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
-//  var movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 10, 50 );
-//  var movement = new VelocityMatch( c1.body, mouse,  c1.body.maxAcceleration );
+//  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
 
+  var movement;
+//  movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
+//  movement = new VelocityMatch( c1.body, mouse,  c1.body.maxAcceleration );
+  movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 3, 50 );
+
+  var l1 = null;
   if ( typeof movement !== "undefined" && movement !== null ) {
-    s1 = movement.getSteering();
+    l1 = movement.getSteering();
   }
-  // Can't test Align by following mouse, cuz mouse has no orientation
-  // But this is how to call it
-  var align = new Align( c1.body, mouse, 1, 1, 0, 0, 0.1 );
-  var a1 = align.getSteering();
   
-  // Apply the steering to the character, if it exists.
+  // Can't test Align by following mouse, cuz mouse has no orientation
+  // Instead we will use LookWhereYouAreGoing class
+  var rotation;
+  
+  // Arguments to Align and subclasses:
+  //  maxAngularAcceleration,
+  //  maxRotation,
+  //  targetRadius,
+  //  slowRadius,
+  
+  rotation = new LookWhereYouAreGoing( c1.body, mouse, 0.5, 1, 0.5, 2, 0.1 );
+
+  var a1 = null;
+  if ( typeof rotation !== "undefined" && rotation !== null ) {
+    a1 = rotation.getSteering();
+  }
+    
+  // Apply the kinematic steering to the character, if it exists.
   // If using dynamic movement, or if character has caught up,
   // then steering won't exist
   // n.b. object assignment does NOT create a copy of the object
@@ -109,6 +125,15 @@ function frame( nowTime, lastTime )
       c1.body.rotation = steering.rotation;
     }
   }
+
+  // Apply the dynamic steering for use by the character
+  if ( l1 !== null ) {
+    s1.linear = l1.linear;
+  }
+  if ( a1 !== null ) {
+    s1.angular = a1.angular;
+  }
+  
   
   // Clear canvas
   context.clearRect( 0, 0, 600, 600 );
