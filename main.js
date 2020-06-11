@@ -4,7 +4,7 @@
 // In JS: assignment for classes, new object NOT created!
 
 // create a kinematic body with these 
-// position, orientation, velocity and rotation (p, o, v, r)
+// position, orientation, velocity, rotation, maxSpeed (p, o, v, r, m)
 
 // Suppose 100 pixels on canvas represents 2cm, or 0.02 m
 // Or, we think in pixels per second, rather than meters per second.
@@ -13,10 +13,11 @@ let p = new Vector(300,0,300);
 let o = 0;
 let v = new Vector( 0, 0, 0 );
 let r = 0;
+let m = 100;
 
 // create a character c1 with Kinematic body
 let c1 = {
-  body: new Kinematic( p, o, v, r),
+  body: new Kinematic( p, o, v, r, m),
   draw: function(context) {
     x = this.body.position.x;
     z = this.body.position.z;
@@ -80,9 +81,9 @@ function frame( nowTime, lastTime )
 {           
   // Have character c1 seek the mouse.
   // Experiment with different algorithms: Seek, Arrive, etc.
-  var maxSpeed = 100;
-//  var k1 = new KinematicSeek( c1.body, mouse, maxSpeed );
-  var k1 = new KinematicArrive( c1.body, mouse, maxSpeed );
+
+//  var k1 = new KinematicSeek( c1.body, mouse, c1.maxSpeed );
+  var k1 = new KinematicArrive( c1.body, mouse, c1.maxSpeed );
   var steering = k1.getSteering();
   
   // Apply the steering to the character, if it exists

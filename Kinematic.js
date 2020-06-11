@@ -10,12 +10,16 @@
 // These kinematic algorithms are bread and butter.
 // Dynamic algorithms, to be covered later, in widespread use, more complex. (p.51)
 
+// Deviation from text: 
+// 1. maxSpeed of Kinematic as instance variable
+
 class Kinematic {
-  constructor( position, orientation, velocity, rotation ) {
+  constructor( position, orientation, velocity, rotation, maxSpeed = 100 ) {
     this.position = position;       // vector
     this.orientation = orientation; // float
     this.velocity = velocity;       // vector
     this.rotation = rotation;       // float
+    this.maxSpeed = maxSpeed;       // float
   }
   
   update( steering, time ) {
@@ -34,6 +38,12 @@ class Kinematic {
       this.velocity
     );
     this.rotation += steering.angular * time;
+    
+    // If velocity is too fast, clip it to max speed
+    if ( this.velocity.length() > this.maxSpeed ) {   
+      this.velocity.unit();     // normalize 
+      this.velocity.multiply( this.maxSpeed );
+    }
   }
 }
 
@@ -120,10 +130,7 @@ class KinematicArrive {
     // n.b. generates new vector object
     
     // If this is too fast, clip it to max speed
-    if ( result.velocity.length() > this.maxSpeed ) {   
-      result.velocity.unit();     // normalize 
-      result.velocity.multiply( this.maxSpeed );
-    }
+    // kinematic update() will do this
     
     // face in direction we want to move
     this.character.orientation = newOrientation(
