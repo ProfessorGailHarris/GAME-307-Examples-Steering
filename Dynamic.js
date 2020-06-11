@@ -88,6 +88,34 @@ class Arrive {
   }
 }
 
+class VelocityMatch {
+  constructor( character, target, maxAcceleration, timeToTarget = 0.1 ) 
+  {
+    this.character = character;
+    this.target = target;
+    this.maxAcceleration = maxAcceleration;
+    // Time over which to achieve target speed
+    this.timeToTarget = timeToTarget;
+  }
+  getSteering() {
+    var result = new SteeringOutput();
+    
+    // Acceleration tries to get to the target velocity
+    result.linear = this.target.velocity.subtract( this.character.velocity );
+    result.linear = result.linear.divide( this.timeToTarget );
+        
+    // Clip to max acceleration if needed
+    if ( result.linear.length() > this.maxAcceleration ) {
+      result.linear = result.linear.unit();
+      result.linear = result.linear.multiply( this.maxAcceleration );
+    }  
+
+    result.angular = 0;
+    return result;
+  }
+}
+
+
 class Align {
   constructor( 
     character, 

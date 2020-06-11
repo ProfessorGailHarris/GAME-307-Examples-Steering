@@ -85,9 +85,11 @@ function frame( nowTime, lastTime )
   // Experiment with different algorithms: Seek, Arrive, etc.
 
 //  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
-//  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
+  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
 //  var movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
-  var movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 10, 50 );
+//  var movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 10, 50 );
+//  var movement = new VelocityMatch( c1.body, mouse,  c1.body.maxAcceleration );
+
   if ( typeof movement !== "undefined" && movement !== null ) {
     s1 = movement.getSteering();
   }
