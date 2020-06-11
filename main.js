@@ -79,13 +79,52 @@ document.onmousemove = function(e){
     mouse.position.z = e.pageY;
 }
 
-function frame( nowTime, lastTime )
+function kinematic_motion( nowTime, lastTime )
 {           
   // Have character c1 seek the mouse.
   // Experiment with different algorithms: Seek, Arrive, etc.
 
 //  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
-//  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
+  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
+
+    
+  // Apply the kinematic steering to the character, if it exists.
+  // If using dynamic movement, or if character has caught up,
+  // then steering won't exist
+  // n.b. object assignment does NOT create a copy of the object
+  if ( typeof k1 !== "undefined" ) {
+    var steering = k1.getSteering();
+    if ( typeof steering !== "undefined" && steering !== null) {
+      c1.body.velocity = steering.velocity;
+      c1.body.rotation = steering.rotation;
+    }
+  }
+  
+  // Clear canvas
+  context.clearRect( 0, 0, 600, 600 );
+
+  var time = (nowTime - lastTime) / 1000;
+
+  // Update character movement
+  c1.body.update( s1, time );
+  
+  // Draw the bodies
+  // Should this be before or after the position update?
+  c1.draw(context);
+  mouse.draw(context);
+
+// Repeat the animation when ready 
+  requestAnimationFrame(
+      function(timestamp){ 
+        kinematic_motion( timestamp, nowTime );
+      }
+  );
+}
+
+function dynamic_motion( nowTime, lastTime )
+{           
+  // Have character c1 seek the mouse.
+  // Experiment with different algorithms: Seek, Arrive, etc.
 
   var movement;
 //  movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
@@ -114,18 +153,6 @@ function frame( nowTime, lastTime )
     a1 = rotation.getSteering();
   }
     
-  // Apply the kinematic steering to the character, if it exists.
-  // If using dynamic movement, or if character has caught up,
-  // then steering won't exist
-  // n.b. object assignment does NOT create a copy of the object
-  if ( typeof k1 !== "undefined" ) {
-    var steering = k1.getSteering();
-    if ( typeof steering !== "undefined" && steering !== null) {
-      c1.body.velocity = steering.velocity;
-      c1.body.rotation = steering.rotation;
-    }
-  }
-
   // Apply the dynamic steering for use by the character
   if ( l1 !== null ) {
     s1.linear = l1.linear;
@@ -133,7 +160,6 @@ function frame( nowTime, lastTime )
   if ( a1 !== null ) {
     s1.angular = a1.angular;
   }
-  
   
   // Clear canvas
   context.clearRect( 0, 0, 600, 600 );
@@ -151,10 +177,12 @@ function frame( nowTime, lastTime )
 // Repeat the animation when ready 
   requestAnimationFrame(
       function(timestamp){ 
-        frame( timestamp, nowTime );
+        dynamic_motion( timestamp, nowTime );
       }
   );
 }
 
+
 // Initialize the frame animation
-frame( 0, 0 );
+//kinematic_motion( 0, 0 );
+dynamic_motion( 0, 0 );
