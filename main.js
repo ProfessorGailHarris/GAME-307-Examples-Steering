@@ -79,15 +79,15 @@ document.onmousemove = function(e){
     mouse.position.z = e.pageY;
 }
 
+// Have character c1 seek the mouse.
+// Experiment with different algorithms: Seek, Arrive, etc.
+
 function kinematic_motion( nowTime, lastTime )
 {           
-  // Have character c1 seek the mouse.
-  // Experiment with different algorithms: Seek, Arrive, etc.
 
 //  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
   var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
 
-    
   // Apply the kinematic steering to the character, if it exists.
   // If using dynamic movement, or if character has caught up,
   // then steering won't exist
@@ -109,11 +109,10 @@ function kinematic_motion( nowTime, lastTime )
   c1.body.update( s1, time );
   
   // Draw the bodies
-  // Should this be before or after the position update?
   c1.draw(context);
   mouse.draw(context);
 
-// Repeat the animation when ready 
+  // Repeat the animation when ready 
   requestAnimationFrame(
       function(timestamp){ 
         kinematic_motion( timestamp, nowTime );
@@ -123,35 +122,19 @@ function kinematic_motion( nowTime, lastTime )
 
 function dynamic_motion( nowTime, lastTime )
 {           
-  // Have character c1 seek the mouse.
-  // Experiment with different algorithms: Seek, Arrive, etc.
-
   var movement;
 //  movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
 //  movement = new VelocityMatch( c1.body, mouse,  c1.body.maxAcceleration );
   movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 3, 50 );
-
-  var l1 = null;
-  if ( typeof movement !== "undefined" && movement !== null ) {
-    l1 = movement.getSteering();
-  }
-  
-  // Can't test Align by following mouse, cuz mouse has no orientation
-  // Instead we will use LookWhereYouAreGoing class
-  var rotation;
+  var l1 = movement.getSteering();
   
   // Arguments to Align and subclasses:
-  //  maxAngularAcceleration,
-  //  maxRotation,
-  //  targetRadius,
-  //  slowRadius,
-  
-  rotation = new LookWhereYouAreGoing( c1.body, mouse, 0.5, 1, 0.5, 2, 0.1 );
-
-  var a1 = null;
-  if ( typeof rotation !== "undefined" && rotation !== null ) {
-    a1 = rotation.getSteering();
-  }
+  //   maxAngularAcceleration, maxRotation, targetRadius, slowRadius,
+  // Can't test Align by following mouse, cuz mouse has no orientation
+  // Instead we will use LookWhereYouAreGoing class
+  var rotation = 
+    new LookWhereYouAreGoing( c1.body, mouse, 0.5, 1, 0.5, 2, 0.1 );
+  var a1 = rotation.getSteering();
     
   // Apply the dynamic steering for use by the character
   if ( l1 !== null ) {
@@ -170,18 +153,16 @@ function dynamic_motion( nowTime, lastTime )
   c1.body.update( s1, time );
   
   // Draw the bodies
-  // Should this be before or after the position update?
   c1.draw(context);
   mouse.draw(context);
 
-// Repeat the animation when ready 
+  // Repeat the animation when ready 
   requestAnimationFrame(
       function(timestamp){ 
         dynamic_motion( timestamp, nowTime );
       }
   );
 }
-
 
 // Initialize the frame animation
 //kinematic_motion( 0, 0 );
