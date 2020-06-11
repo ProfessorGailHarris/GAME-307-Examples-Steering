@@ -91,6 +91,10 @@ function frame( nowTime, lastTime )
   if ( typeof movement !== "undefined" && movement !== null ) {
     s1 = movement.getSteering();
   }
+  // Can't test Align by following mouse, cuz mouse has no orientation
+  // But this is how to call it
+  var align = new Align( c1.body, mouse, 1, 1, 0, 0, 0.1 );
+  var a1 = align.getSteering();
   
   // Apply the steering to the character, if it exists.
   // If using dynamic movement, or if character has caught up,
@@ -103,7 +107,7 @@ function frame( nowTime, lastTime )
       c1.body.rotation = steering.rotation;
     }
   }
-
+  
   // Clear canvas
   context.clearRect( 0, 0, 600, 600 );
 
@@ -127,5 +131,3 @@ function frame( nowTime, lastTime )
 
 // Initialize the frame animation
 frame( 0, 0 );
-
-

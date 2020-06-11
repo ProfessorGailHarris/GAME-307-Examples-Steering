@@ -24,8 +24,8 @@ class Seek {
     result.linear = this.target.position.subtract( this.character.position );
     
     // acceleration is along this direction, at full
-    result.linear.unit();     // normalize 
-    result.linear.multiply( this.maxAcceleration );
+    result.linear = result.linear.unit();     // normalize 
+    result.linear = result.linear.multiply( this.maxAcceleration );
     
     result.angular = 0;
     return result;
@@ -87,3 +87,84 @@ class Arrive {
     return result;
   }
 }
+
+class Align {
+  constructor( 
+    character, 
+    target,
+    maxAngularAcceleration,
+    maxRotation,
+    targetRadius,
+    slowRadius,
+    timeToTarget
+  ) 
+  {
+    this.character = character;
+    this.target = target;
+    this.maxAngularAcceleration = maxAngularAcceleration;
+    this.maxRotation = maxRotation;
+    // The radius for arriving at the target
+    this.targetRadius = targetRadius;
+    // The radius for beginning to slow down
+    this.slowRadius = slowRadius;
+    // The time over which to achieve target speed
+    this.timeToTarget = timeToTarget;
+  }
+  
+  getSteering() {
+    var result = new SteeringOutput();
+    
+    // Get naive direction to target
+    var rotation = this.target.orientation - this.character.orientation;
+    
+    // Map result to (-pi, pi)
+    rotation = mapToRange( rotation );
+    var rotationSize = Math.abs( rotation );
+    
+    // Check if we are there, return no steering
+    if ( rotationSize < this.targetRadius ) {
+      return null;
+    }
+    
+    var targetRotation;
+    // If outside the slow radius, use max rotation
+    // else use scaled rotation
+    if ( rotationSize > this.slowRadius ) {
+      targetRotation = this.maxRotation;
+    }
+    else {
+      targetRotation = this.maxRotation * rotationSize / this.slowRadius;
+    }
+    
+    // The final target rotation combines speed and direction
+    targetRotation *= rotation / rotationSize;
+    
+    // Acceleration tries to get to the target rotation
+    result.angular = targetRotation - this.character.rotation;
+    result.angular /= this.timeToTarget;
+    
+    // Check if acceleration exceeds max
+    var angularAcceleration = Math.abs( result.angular );
+    if ( angularAcceleration > this.maxAngularAcceleration ) {
+      result.angular /= angularAcceleration;
+      result.angular *= this.maxAngularAcceleration;
+    }
+        
+    result.linear = new Vector(0, 0, 0);
+    return result;
+  }
+}
+
+// https://rosettacode.org/wiki/Angle_difference_between_two_bearings
+// Returns a value in radians between -Pi and Pi
+function mapToRange( r ) {
+  r = r % (2 * Math.PI);
+  if (r < -Math.PI) {
+    r += 2*Math.PI;
+  }
+  if (r >= Math.PI) {
+    r -= 2*Math.PI
+  }
+  return(r)
+}
+
