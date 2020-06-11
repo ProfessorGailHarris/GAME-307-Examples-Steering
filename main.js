@@ -4,7 +4,8 @@
 // In JS: assignment for classes, new object NOT created!
 
 // create a kinematic body with these 
-// position, orientation, velocity, rotation, maxSpeed (p, o, v, r, m)
+// position, orientation, velocity, rotation, maxSpeed, maxAcceleration
+// (p, o, v, r, m, a)
 
 // Suppose 100 pixels on canvas represents 2cm, or 0.02 m
 // Or, we think in pixels per second, rather than meters per second.
@@ -14,10 +15,11 @@ let o = 0;
 let v = new Vector( 0, 0, 0 );
 let r = 0;
 let m = 100;
+let a = 80;
 
 // create a character c1 with Kinematic body
 let c1 = {
-  body: new Kinematic( p, o, v, r, m),
+  body: new Kinematic( p, o, v, r, m, a ),
   draw: function(context) {
     x = this.body.position.x;
     z = this.body.position.z;
@@ -82,15 +84,24 @@ function frame( nowTime, lastTime )
   // Have character c1 seek the mouse.
   // Experiment with different algorithms: Seek, Arrive, etc.
 
-//  var k1 = new KinematicSeek( c1.body, mouse, c1.maxSpeed );
-  var k1 = new KinematicArrive( c1.body, mouse, c1.maxSpeed );
-  var steering = k1.getSteering();
+//  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
+//  var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
+//  var movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
+  var movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 10, 50 );
+  if ( typeof movement !== "undefined" && movement !== null ) {
+    s1 = movement.getSteering();
+  }
   
-  // Apply the steering to the character, if it exists
+  // Apply the steering to the character, if it exists.
+  // If using dynamic movement, or if character has caught up,
+  // then steering won't exist
   // n.b. object assignment does NOT create a copy of the object
-  if (typeof steering !== "undefined" && steering !== null) {
-    c1.body.velocity = steering.velocity;
-    c1.body.rotation = steering.rotation;
+  if ( typeof k1 !== "undefined" ) {
+    var steering = k1.getSteering();
+    if ( typeof steering !== "undefined" && steering !== null) {
+      c1.body.velocity = steering.velocity;
+      c1.body.rotation = steering.rotation;
+    }
   }
 
   // Clear canvas
@@ -116,4 +127,5 @@ function frame( nowTime, lastTime )
 
 // Initialize the frame animation
 frame( 0, 0 );
+
 

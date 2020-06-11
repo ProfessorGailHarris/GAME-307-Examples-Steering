@@ -14,12 +14,13 @@
 // 1. maxSpeed of Kinematic as instance variable
 
 class Kinematic {
-  constructor( position, orientation, velocity, rotation, maxSpeed = 100 ) {
+  constructor( position, orientation, velocity, rotation, maxSpeed = 100, maxAcceleration = 5 ) {
     this.position = position;       // vector
     this.orientation = orientation; // float
     this.velocity = velocity;       // vector
     this.rotation = rotation;       // float
     this.maxSpeed = maxSpeed;       // float
+    this.maxAcceleration = maxAcceleration;   // float
   }
   
   update( steering, time ) {
@@ -32,17 +33,19 @@ class Kinematic {
     this.orientation += this.rotation * time
     
     // Update velocity and rotation
-    Vector.add( 
-      this.velocity,
-      steering.linear.multiply(time), 
-      this.velocity
-    );
-    this.rotation += steering.angular * time;
+    if ( typeof steering !== "undefined" && steering !== null ) {
+      Vector.add( 
+        this.velocity,
+        steering.linear.multiply(time), 
+        this.velocity
+      );
+      this.rotation += steering.angular * time;
+    }
     
     // If velocity is too fast, clip it to max speed
     if ( this.velocity.length() > this.maxSpeed ) {   
-      this.velocity.unit();     // normalize 
-      this.velocity.multiply( this.maxSpeed );
+      this.velocity = this.velocity.unit();     // normalize 
+      this.velocity = this.velocity.multiply( this.maxSpeed );
     }
   }
 }
@@ -88,8 +91,8 @@ class KinematicSeek {
     result.velocity = this.target.position.subtract( this.character.position );
     
     // velocity is along this direction, at full speed
-    result.velocity.unit();     // normalize 
-    result.velocity.multiply( this.maxSpeed );
+    result.velocity = result.velocity.unit();     // normalize 
+    result.velocity = result.velocity.multiply( this.maxSpeed );
     
     // face in direction we want to move
     this.character.orientation = newOrientation(
@@ -126,7 +129,7 @@ class KinematicArrive {
     
     // we need to move to our target, and we'd like
     // to get there in timeToTarget seconds.
-    result.velocity = result.velocity.divide(this.timeToTarget);
+    result.velocity = result.velocity.divide( this.timeToTarget );
     // n.b. generates new vector object
     
     // If this is too fast, clip it to max speed
