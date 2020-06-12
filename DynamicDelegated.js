@@ -32,10 +32,7 @@ class LookWhereYouAreGoing extends Align {
       return null;
     }
     // Otherwise set target based on the velocity
-    this.target.orientation = Math.atan2(
-      -velocity.x, 
-      velocity.z
-    );
+    this.target.orientation = Math.atan2( -velocity.x, velocity.z );
     // Delegate rest to Align
     return super.getSteering();
   }

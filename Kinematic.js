@@ -31,17 +31,24 @@ class Kinematic {
       this.position 
     );
     this.orientation += this.rotation * time
-    
-    // Update velocity and rotation
-    if ( typeof steering !== "undefined" && steering !== null && steering.linear !== null ) {
-      Vector.add( 
-        this.velocity,
-        steering.linear.multiply(time), 
-        this.velocity
-      );
+
+    // If kinematic steering, set new velocity and rotation
+    if ( steering instanceof KinematicSteeringOutput && steering !== null ) {
+      this.velocity = steering.velocity;
+      this.rotation = steering.rotation;
+    }
+    // If dynamic steering, update velocity and rotation
+    else if ( steering instanceof SteeringOutput && steering !== null ) {
+      if ( steering.linear !== null ) {
+        Vector.add( 
+          this.velocity,
+          steering.linear.multiply(time), 
+          this.velocity
+        );
+      } 
       this.rotation += steering.angular * time;
     }
-    
+
     // If velocity is too fast, clip it to max speed
     if ( this.velocity.length() > this.maxSpeed ) {   
       this.velocity = this.velocity.unit();     // normalize 

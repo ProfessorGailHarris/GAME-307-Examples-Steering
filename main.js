@@ -14,7 +14,7 @@ let p = new Vector(300,0,300);
 let o = 0;
 let v = new Vector( 0, 0, 0 );
 let r = 0;
-let m = 100;
+let m = 500;
 let a = 80;
 
 // create a character c1 with Kinematic body
@@ -82,23 +82,10 @@ document.onmousemove = function(e){
 // Have character c1 seek the mouse.
 // Experiment with different algorithms: Seek, Arrive, etc.
 
-function kinematic_motion( nowTime, lastTime )
-{           
-
-//  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
+function kinematic_motion( nowTime, lastTime ) {
+  //  var k1 = new KinematicSeek( c1.body, mouse, c1.body.maxSpeed );
   var k1 = new KinematicArrive( c1.body, mouse, c1.body.maxSpeed );
-
-  // Apply the kinematic steering to the character, if it exists.
-  // If using dynamic movement, or if character has caught up,
-  // then steering won't exist
-  // n.b. object assignment does NOT create a copy of the object
-  if ( typeof k1 !== "undefined" ) {
-    var steering = k1.getSteering();
-    if ( typeof steering !== "undefined" && steering !== null) {
-      c1.body.velocity = steering.velocity;
-      c1.body.rotation = steering.rotation;
-    }
-  }
+  var steering = k1.getSteering();
   
   // Clear canvas
   context.clearRect( 0, 0, 600, 600 );
@@ -106,7 +93,7 @@ function kinematic_motion( nowTime, lastTime )
   var time = (nowTime - lastTime) / 1000;
 
   // Update character movement
-  c1.body.update( s1, time );
+  c1.body.update( steering, time );
   
   // Draw the bodies
   c1.draw(context);
@@ -133,7 +120,7 @@ function dynamic_motion( nowTime, lastTime )
   // Can't test Align by following mouse, cuz mouse has no orientation
   // Instead we will use LookWhereYouAreGoing class
   var rotation = 
-    new LookWhereYouAreGoing( c1.body, mouse, 0.65, 1, 0.05, 0.25, 0.01 );
+    new LookWhereYouAreGoing( c1.body, mouse, 0.65, 1, 0.05, 0.04, 0.18 );
   var a1 = rotation.getSteering();
     
   // Apply the dynamic steering for use by the character
@@ -154,12 +141,12 @@ function dynamic_motion( nowTime, lastTime )
 
   // Repeat the animation when ready 
   requestAnimationFrame(
-      function(timestamp){ 
-        dynamic_motion( timestamp, nowTime );
-      }
+    function(timestamp){ 
+      dynamic_motion( timestamp, nowTime );
+    }
   );
 }
 
 // Initialize the frame animation
 //kinematic_motion( 0, 0 );
-dynamic_motion( 0, 0 );
+//dynamic_motion( 0, 0 );
