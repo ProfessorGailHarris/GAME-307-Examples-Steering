@@ -30,7 +30,7 @@ class Kinematic {
       this.velocity.multiply( time ), 
       this.position 
     );
-    this.orientation += this.rotation * time
+    this.orientation += this.rotation * time;
 
     // If kinematic steering, set new velocity and rotation
     if ( steering instanceof KinematicSteeringOutput && steering !== null ) {
