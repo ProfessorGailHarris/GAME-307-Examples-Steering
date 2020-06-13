@@ -112,7 +112,7 @@ function dynamic_motion( nowTime, lastTime )
   var movement;
 //  movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
 //  movement = new VelocityMatch( c1.body, mouse,  c1.body.maxAcceleration );
-  movement = new Arrive( c1.body, mouse,  c1.body.maxAcceleration, c1.body.maxSpeed, 3, 50 );
+  movement = new Arrive( c1.body, mouse, c1.body.maxAcceleration, 200, 3, 200 );
   var l1 = movement.getSteering();
   
   // Arguments to Align and subclasses:
@@ -120,7 +120,7 @@ function dynamic_motion( nowTime, lastTime )
   // Can't test Align by following mouse, cuz mouse has no orientation
   // Instead we will use LookWhereYouAreGoing class
   var rotation = 
-    new LookWhereYouAreGoing( c1.body, mouse, 0.65, 1, 0.05, 0.04, 0.18 );
+    new LookWhereYouAreGoing( c1.body, mouse, 0.75, 1, 0.2, 0.4, 0.9 );
   var a1 = rotation.getSteering();
     
   // Apply the dynamic steering for use by the character
