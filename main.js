@@ -15,7 +15,7 @@ let o = 0;
 let v = new Vector( 0, 0, 0 );
 let r = 0;
 let m = 500;
-let a = 80;
+let a = 200;
 
 // create a character c1 with Kinematic body
 let c1 = {
@@ -112,7 +112,11 @@ function dynamic_motion( nowTime, lastTime )
   var movement;
 //  movement = new Seek( c1.body, mouse, c1.body.maxAcceleration );
 //  movement = new VelocityMatch( c1.body, mouse,  c1.body.maxAcceleration );
-  movement = new Arrive( c1.body, mouse, c1.body.maxAcceleration, 200, 3, 200 );
+  // additional parameters to Arrive:
+  // targetRadius
+  // slowRadius
+  // time to target (optional, default is 0.1)
+  movement = new Arrive( c1.body, mouse, c1.body.maxAcceleration, c1.body.maxSpeed, 2, 150 );
   var l1 = movement.getSteering();
   
   // Arguments to Align and subclasses:
