@@ -47,6 +47,8 @@ class Kinematic {
         );
       } 
       this.rotation += steering.angular * time;
+      // dampen the rotation before its used in next tick
+      this.rotation -= 0.05 * this.rotation;
     }
 
     // If velocity is too fast, clip it to max speed

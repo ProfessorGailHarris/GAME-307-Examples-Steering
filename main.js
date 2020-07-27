@@ -124,7 +124,7 @@ function dynamic_motion( nowTime, lastTime )
   // Can't test Align by following mouse, cuz mouse has no orientation
   // Instead we will use LookWhereYouAreGoing class
   var rotation = 
-    new LookWhereYouAreGoing( c1.body, mouse, 0.75, 1, 0.2, 0.4, 0.9 );
+    new LookWhereYouAreGoing( c1.body, mouse, 5.75, 20, 0.1, 0.4, 0.2 );
   var a1 = rotation.getSteering();
     
   // Apply the dynamic steering for use by the character
