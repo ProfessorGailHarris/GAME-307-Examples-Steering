@@ -8,8 +8,8 @@
     <style>
       #canvas {
         border:1px solid red;
-        width: 600px;
-        height: 600px;
+        width: 1360px;
+        height: 750px;
       }        
     </style>
 
@@ -21,12 +21,15 @@
 
   <body>
     <main>
-      <canvas id="canvas" width="600" height="600"></canvas><br><br>
+      <canvas id="canvas" width="1360" height="750"></canvas><br><br>
       <script src="main.js"></script>
   <script>
 
 //  c1.body.maxSpeed = 500;   // good for kinematic demo
 //  kinematic_motion( 0, 0 );
+    
+    // maxSpeed of 500 causes overshoot with dynamic algorithm
+    // maybe experiment with radius of arrive to fix that?
     c1.body.maxSpeed = 200;   // good for dynamic demo
     dynamic_motion( 0, 0 );
 

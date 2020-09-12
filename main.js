@@ -63,20 +63,21 @@ context.strokeStyle = "rgb(33,66,99)";
 // create a mouse character, a small circle
 var mouse = {
   position: new Vector( 0, 0, 0 ),
+  radius: 10,
   draw: function(context) {
     // Adjust for the position of the canvas
     // https://www.w3schools.com/jsref/event_clientx.asp
-    var x = this.position.x - canvasPosition.left;
-    var z = this.position.z - canvasPosition.top;
+    var x = this.position.x - canvasPosition.left + mouse.radius;
+    var z = this.position.z - canvasPosition.top + mouse.radius;
     context.beginPath();
-    context.arc( x, z, 10, 0, 2 * Math.PI);
+    context.arc( x, z, mouse.radius, 0, 2 * Math.PI);
     context.stroke();
   }
 }
 // monitor position of the mouse
 document.onmousemove = function(e){
-    mouse.position.x = e.pageX;
-    mouse.position.z = e.pageY;
+    mouse.position.x = e.pageX - mouse.radius;
+    mouse.position.z = e.pageY - mouse.radius;
 }
 
 // Have character c1 seek the mouse.
@@ -88,7 +89,7 @@ function kinematic_motion( nowTime, lastTime ) {
   var steering = k1.getSteering();
   
   // Clear canvas
-  context.clearRect( 0, 0, 600, 600 );
+  context.clearRect( 0, 0, canvas.width, canvas.height );
 
   var time = (nowTime - lastTime) / 1000;
 
@@ -132,7 +133,7 @@ function dynamic_motion( nowTime, lastTime )
   s1.angular = ( a1 !== null ) ? a1.angular : 0;
   
   // Clear canvas
-  context.clearRect( 0, 0, 600, 600 );
+  context.clearRect( 0, 0, canvas.width, canvas.height );
 
   var time = (nowTime - lastTime) / 1000;
 
